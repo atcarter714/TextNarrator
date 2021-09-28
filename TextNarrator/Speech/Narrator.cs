@@ -49,6 +49,18 @@ namespace TextNarrator.Speech
         #region Public Properties
 
         /// <summary>
+        /// Indicates if Narrator has disposed of resources
+        /// </summary>
+        public bool IsDisposed => disposed;
+
+        /// <summary>
+        /// Indicates if Narrator is disposing of resources
+        /// </summary>
+        public bool Disposing { get; protected set; }
+
+
+
+        /// <summary>
         /// Gets or sets the Narrator's speed
         /// </summary>
         public int Rate {
@@ -330,7 +342,9 @@ namespace TextNarrator.Speech
         protected virtual void Dispose ( bool disposing ) {
 
             if ( !disposed ) {
-                
+
+                this.Disposing = disposing;
+
                 if ( disposing && speechSynth != null ) {
 
                     if( this.isSpeaking || this.isPaused )
@@ -342,6 +356,7 @@ namespace TextNarrator.Speech
                     speechSynth.StateChanged -= onStateChange;
 
                     speechSynth.Dispose();
+                    speechSynth = null;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

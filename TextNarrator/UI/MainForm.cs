@@ -80,11 +80,21 @@ namespace TextNarrator.UI
         }
 
         protected override void OnClosed ( EventArgs e ) {
-            
+
             narrator.Dispose();
 
-            base.OnClosed( e ); 
+            base.OnClosed( e );
         }
+
+        //static readonly int WM_PASTE = 0x0302;
+        //protected override void WndProc ( ref Message m ) {
+
+        //    if( m.Msg == WM_PASTE || m.Msg == 0x100 ) {
+        //        int i = 10, x = 20, c = i + x;
+        //    }
+
+        //    base.WndProc( ref m ); 
+        //}
 
         #endregion
 
@@ -95,29 +105,44 @@ namespace TextNarrator.UI
         /// </summary>
         void _onNarratorStateChanged ( ) {
 
+            if ( narrator == null || narrator.IsDisposed || narrator.Disposing ) {
+
+                /* The app is closing, and the SpeechSynthesizer object is gone,
+                 * so we cannot access its state or take any actions on it ... 
+                 */
+
+                return;
+            }
+
             switch ( narrator.SynthState ) {
 
-                case  SynthesizerState.Speaking:
+                //! Narrator is speaking :
+                case  SynthesizerState.Speaking: 
+                    {
+                        btn_Speak.Text = _PAUSE_TXT;
 
-                    btn_Speak.Text = _PAUSE_TXT;
+                        _setStopButtonState( true );
+                        _enabledisableUIOptions( false );
+                        break;
+                    }
 
-                    _setStopButtonState( true );
-                    _enabledisableUIOptions( false );
-                    break;
+                //! Narrator is paused :
+                case SynthesizerState.Paused: 
+                    {
+                        btn_Speak.Text = _RESUME_TXT;
+                        break;
+                    }
 
-                case SynthesizerState.Paused:
-
-                    btn_Speak.Text = _RESUME_TXT;
-                    break;
-
+                //! Narrator is ready :
                 case SynthesizerState.Ready:
-                default:
+                default: 
+                    {
+                        btn_Speak.Text = _SPEAK_TXT;
 
-                    btn_Speak.Text = _SPEAK_TXT;
-
-                    _setStopButtonState();
-                    _enabledisableUIOptions( true );
-                    break;
+                        _setStopButtonState();
+                        _enabledisableUIOptions( true );
+                        break;
+                    }
             }
         }
 
@@ -285,8 +310,14 @@ namespace TextNarrator.UI
 
         void OnEdit_PasteClick ( object sender, EventArgs e ) {
 
-            if ( Clipboard.ContainsText() && richTextBox_TextToRead.CanPaste( DataFormats.GetFormat( DataFormats.Text ) ) )
-                richTextBox_TextToRead.Paste();
+            if ( Clipboard.ContainsText() && richTextBox_TextToRead.CanPaste( DataFormats.GetFormat( DataFormats.Text ) ) ) {
+                //richTextBox_TextToRead.Paste();
+
+                var copiedText = Clipboard.GetText();
+
+                richTextBox_TextToRead.Text += copiedText;
+            }
+
         }
 
         void OnEdit_SelectAllClick ( object sender, EventArgs e ) {
@@ -305,6 +336,8 @@ namespace TextNarrator.UI
         #endregion
 
 
+
+
         void OnTextboxRightClick ( object sender, MouseEventArgs e ) {
 
             if ( e.Button == MouseButtons.Right ) {
@@ -312,7 +345,17 @@ namespace TextNarrator.UI
                 if ( contextMenuStrip_EditText.Visible )
                     contextMenuStrip_EditText.Hide();
 
+                _onOpeningContext( ( richTextBox_TextToRead.SelectedText.Length > 0 ) );
+
                 contextMenuStrip_EditText.Show( richTextBox_TextToRead, e.Location );
+            }
+
+
+            void _onOpeningContext ( bool hasSelectedText ) {
+
+                contextMenu_Copy.Enabled = hasSelectedText;
+                contextMenu_Cut.Enabled = hasSelectedText;
+                contextMenu_Delete.Enabled = hasSelectedText;
             }
         }
 
