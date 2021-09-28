@@ -32,10 +32,10 @@ namespace TextNarrator.UI
 
         #region Constants & Read-Only Strings
         static readonly string
-            _PAUSE_TXT = "Pause",
-            _SPEAK_TXT = "Speak",
-            _RESUME_TXT = "Resume",
-            _STOP_TXT = "Stop / Cancel";
+            _PAUSE_TXT = ACResources.Pause_Button_TXT,
+            _SPEAK_TXT = ACResources.Speak_Button_TXT,
+            _RESUME_TXT = ACResources.Resume_Button_TXT,
+            _STOP_TXT = ACResources.StopCancel_Button_TXT;
         #endregion
 
 
@@ -143,20 +143,34 @@ namespace TextNarrator.UI
         }
 
 
-
+        /// <summary>
+        /// Set up the initial UI state when app loads
+        /// </summary>
         void _setInitialUIState ( ) {
 
             OnVoiceChanged( null, null );
 
+            btn_Clear.Text = ACResources.Clear_Button_TXT;
+            btn_Speak.Text = ACResources.Speak_Button_TXT;
+            btn_Stop.Text = ACResources.StopCancel_Button_TXT;
+
             _setStopButtonState( false );
         }
 
+        /// <summary>
+        /// Enables or disables the voice selector and speech options
+        /// </summary>
+        /// <param name="enabled">Enabled is set to this value</param>
         void _enabledisableUIOptions ( bool enabled = false ) {
             comboBox_Voices.Enabled = enabled;
             trackBar_Volume.Enabled = enabled;
             trackBar_Speed.Enabled = enabled;
         }
 
+        /// <summary>
+        /// Enables of disables the Stop / Cancel button
+        /// </summary>
+        /// <param name="visibility">Sets visible and enabled to this value</param>
         void _setStopButtonState ( bool visibility = false ) {
             btn_Stop.Enabled = visibility;
             btn_Stop.Visible = visibility;
@@ -177,6 +191,8 @@ namespace TextNarrator.UI
         }
 
 
+
+        #region UI Event Handlers
 
         void OnVoiceChanged ( object sender, EventArgs e ) {
 
@@ -222,12 +238,22 @@ namespace TextNarrator.UI
         }
 
         void OnVolumeChanged( object sender, EventArgs e ) {
-            narrator.Volume = trackBar_Volume.Value;
+
+            var vol = trackBar_Volume.Value;
+
+            narrator.Volume = vol;
+            label_Volume_Value.Text = vol.ToString();
         }
 
         void OnSpeedChanged( object sender, EventArgs e ) {
-            narrator.Rate = trackBar_Speed.Value;
+
+            var speed = trackBar_Speed.Value;
+
+            narrator.Rate = speed;
+            label_Speed_Value.Text = speed.ToString();
         }
+
+        #endregion
 
 
 
@@ -269,9 +295,26 @@ namespace TextNarrator.UI
                 richTextBox_TextToRead.SelectAll();
         }
 
+        void OnEdit_DeleteClick( object sender, EventArgs e ) {
+
+            //var selection = richTextBox_TextToRead.SelectedText;
+
+            richTextBox_TextToRead.SelectedText = string.Empty;
+        }
+
         #endregion
 
 
+        void OnTextboxRightClick ( object sender, MouseEventArgs e ) {
+
+            if ( e.Button == MouseButtons.Right ) {
+
+                if ( contextMenuStrip_EditText.Visible )
+                    contextMenuStrip_EditText.Hide();
+
+                contextMenuStrip_EditText.Show( richTextBox_TextToRead, e.Location );
+            }
+        }
 
 
 

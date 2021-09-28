@@ -48,6 +48,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ACResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ACResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Speech\Narrator.cs" />
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
@@ -57,6 +62,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ACResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ACResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -81,6 +90,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file\img\contextmenu_Copy_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file\img\contextmenu_Cut_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file\img\contextmenu_Paste_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file\img\contextmenu_SelectAll_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -220,6 +220,11 @@ namespace TextNarrator.Speech
         }
 
 
+        /// <summary>
+        /// Speaks the given text through  a 
+        /// SpeechSynthesizer object asynchronously
+        /// </summary>
+        /// <param name="text">Text to speak</param>
         public void Speak( string text ) {
 
             if ( string.IsNullOrEmpty( text ) )
@@ -229,18 +234,27 @@ namespace TextNarrator.Speech
                 speechSynth.SpeakAsync( text );
         }
 
+        /// <summary>
+        /// Pauses the SpeechSynthesizer during speech
+        /// </summary>
         public void Pause ( ) {
 
             if ( speechSynth.State == SynthesizerState.Speaking )
                 speechSynth.Pause();
         }
 
+        /// <summary>
+        /// Resumes the SpeechSynthesizer if paused
+        /// </summary>
         public void Resume ( ) {
 
             if ( speechSynth.State == SynthesizerState.Paused )
                 speechSynth.Resume();
         }
 
+        /// <summary>
+        /// Stops the SpeechSynthesizer if speaking or paused
+        /// </summary>
         public void Stop ( ) {
 
             if ( this.isSpeaking || this.isPaused ) {
@@ -252,6 +266,11 @@ namespace TextNarrator.Speech
             }
         }
 
+        /// <summary>
+        /// Changes to a new installed voice
+        /// </summary>
+        /// <param name="index">Index of the voice selected</param>
+        /// <returns>Information about the voice</returns>
         public VoiceInfo ChangeVoice( int index ) {
 
             if ( index < 0 || index >= installedVoices.Count )
