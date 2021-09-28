@@ -60,7 +60,7 @@ namespace TextNarrator.UI
             this.tsmi_Tools_Options = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_Help_About = new System.Windows.Forms.ToolStripMenuItem();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btn_Stop = new System.Windows.Forms.Button();
             this.trackBar_Volume = new System.Windows.Forms.TrackBar();
             this.trackBar_Speed = new System.Windows.Forms.TrackBar();
             this.label_Volume = new System.Windows.Forms.Label();
@@ -69,12 +69,13 @@ namespace TextNarrator.UI
             this.label_Name = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label_Culture = new System.Windows.Forms.Label();
-            this.label_Description = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.label_Gender = new System.Windows.Forms.Label();
+            this.label_Age = new System.Windows.Forms.Label();
             this.label_Name_TXT = new System.Windows.Forms.Label();
             this.label_Culture_TXT = new System.Windows.Forms.Label();
-            this.label_Description_TXT = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label_Gender_TXT = new System.Windows.Forms.Label();
+            this.label_Age_TXT = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.menuStrip_Main.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Volume)).BeginInit();
@@ -365,14 +366,15 @@ namespace TextNarrator.UI
             this.tsmi_Help_About.Size = new System.Drawing.Size(180, 22);
             this.tsmi_Help_About.Text = "&About...";
             // 
-            // button1
+            // btn_Stop
             // 
-            this.button1.Location = new System.Drawing.Point(454, 510);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(156, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Stop";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btn_Stop.Location = new System.Drawing.Point(454, 510);
+            this.btn_Stop.Name = "btn_Stop";
+            this.btn_Stop.Size = new System.Drawing.Size(156, 23);
+            this.btn_Stop.TabIndex = 8;
+            this.btn_Stop.Text = _STOP_TXT;
+            this.btn_Stop.UseVisualStyleBackColor = true;
+            this.btn_Stop.Click += new System.EventHandler(this.OnStopButtonClick);
             // 
             // trackBar_Volume
             // 
@@ -384,6 +386,7 @@ namespace TextNarrator.UI
             this.trackBar_Volume.TabIndex = 9;
             this.trackBar_Volume.TickFrequency = 10;
             this.trackBar_Volume.Value = 100;
+            this.trackBar_Volume.ValueChanged += new System.EventHandler(this.OnVolumeChanged);
             // 
             // trackBar_Speed
             // 
@@ -393,6 +396,7 @@ namespace TextNarrator.UI
             this.trackBar_Speed.Size = new System.Drawing.Size(128, 45);
             this.trackBar_Speed.TabIndex = 10;
             this.trackBar_Speed.TickFrequency = 2;
+            this.trackBar_Speed.ValueChanged += new System.EventHandler(this.OnSpeedChanged);
             // 
             // label_Volume
             // 
@@ -436,12 +440,12 @@ namespace TextNarrator.UI
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.64045F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.35955F));
-            this.tableLayoutPanel1.Controls.Add(this.label7, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label_Description_TXT, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label_Age_TXT, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label_Gender_TXT, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label_Name, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_Culture, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label_Description, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label_Gender, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label_Age, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.label_Name_TXT, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_Culture_TXT, 1, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
@@ -464,25 +468,25 @@ namespace TextNarrator.UI
             this.label_Culture.TabIndex = 1;
             this.label_Culture.Text = "Culture:";
             // 
-            // label_Description
+            // label_Gender
             // 
-            this.label_Description.AutoSize = true;
-            this.label_Description.Font = new System.Drawing.Font("Britannic Bold", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Description.Location = new System.Drawing.Point(3, 50);
-            this.label_Description.Name = "label_Description";
-            this.label_Description.Size = new System.Drawing.Size(43, 15);
-            this.label_Description.TabIndex = 2;
-            this.label_Description.Text = "label3";
+            this.label_Gender.AutoSize = true;
+            this.label_Gender.Font = new System.Drawing.Font("Britannic Bold", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Gender.Location = new System.Drawing.Point(3, 50);
+            this.label_Gender.Name = "label_Gender";
+            this.label_Gender.Size = new System.Drawing.Size(77, 15);
+            this.label_Gender.TabIndex = 2;
+            this.label_Gender.Text = "Description:";
             // 
-            // label4
+            // label_Age
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Britannic Bold", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(3, 75);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(43, 15);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "label4";
+            this.label_Age.AutoSize = true;
+            this.label_Age.Font = new System.Drawing.Font("Britannic Bold", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Age.Location = new System.Drawing.Point(3, 75);
+            this.label_Age.Name = "label_Age";
+            this.label_Age.Size = new System.Drawing.Size(31, 15);
+            this.label_Age.TabIndex = 3;
+            this.label_Age.Text = "Age:";
             // 
             // label_Name_TXT
             // 
@@ -504,33 +508,43 @@ namespace TextNarrator.UI
             this.label_Culture_TXT.TabIndex = 5;
             this.label_Culture_TXT.Text = "-----";
             // 
-            // label_Description_TXT
+            // label_Gender_TXT
             // 
-            this.label_Description_TXT.AutoSize = true;
-            this.label_Description_TXT.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Description_TXT.Location = new System.Drawing.Point(126, 50);
-            this.label_Description_TXT.Name = "label_Description_TXT";
-            this.label_Description_TXT.Size = new System.Drawing.Size(27, 15);
-            this.label_Description_TXT.TabIndex = 6;
-            this.label_Description_TXT.Text = "-----";
+            this.label_Gender_TXT.AutoSize = true;
+            this.label_Gender_TXT.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Gender_TXT.Location = new System.Drawing.Point(126, 50);
+            this.label_Gender_TXT.Name = "label_Gender_TXT";
+            this.label_Gender_TXT.Size = new System.Drawing.Size(27, 15);
+            this.label_Gender_TXT.TabIndex = 6;
+            this.label_Gender_TXT.Text = "-----";
             // 
-            // label7
+            // label_Age_TXT
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(126, 75);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(27, 15);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "-----";
+            this.label_Age_TXT.AutoSize = true;
+            this.label_Age_TXT.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Age_TXT.Location = new System.Drawing.Point(126, 75);
+            this.label_Age_TXT.Name = "label_Age_TXT";
+            this.label_Age_TXT.Size = new System.Drawing.Size(27, 15);
+            this.label_Age_TXT.TabIndex = 7;
+            this.label_Age_TXT.Text = "-----";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(476, 76);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Speech Options:";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.panel_VoiceInfo);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btn_Stop);
             this.Controls.Add(this.btn_Clear);
             this.Controls.Add(this.btn_Speak);
             this.Controls.Add(this.panel1);
@@ -541,6 +555,8 @@ namespace TextNarrator.UI
             this.Controls.Add(this.menuStrip_Main);
             this.MainMenuStrip = this.menuStrip_Main;
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(800, 600);
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Text Narrator";
@@ -593,7 +609,7 @@ namespace TextNarrator.UI
         private System.Windows.Forms.ToolStripMenuItem tsmi_Tools_Options;
         private System.Windows.Forms.ToolStripMenuItem tsmi_Help;
         private System.Windows.Forms.ToolStripMenuItem tsmi_Help_About;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btn_Stop;
         private System.Windows.Forms.Label label_Speed;
         private System.Windows.Forms.TrackBar trackBar_Volume;
         private System.Windows.Forms.TrackBar trackBar_Speed;
@@ -602,12 +618,13 @@ namespace TextNarrator.UI
         private System.Windows.Forms.Label label_Name;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label_Culture;
-        private System.Windows.Forms.Label label_Description;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label_Description_TXT;
+        private System.Windows.Forms.Label label_Gender;
+        private System.Windows.Forms.Label label_Age;
+        private System.Windows.Forms.Label label_Age_TXT;
+        private System.Windows.Forms.Label label_Gender_TXT;
         private System.Windows.Forms.Label label_Name_TXT;
         private System.Windows.Forms.Label label_Culture_TXT;
+        private System.Windows.Forms.Label label1;
     }
 }
 
