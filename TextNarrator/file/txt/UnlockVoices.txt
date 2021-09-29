@@ -1,0 +1,23 @@
+﻿
+#If all of your installed voices are not showing up in the app, it's because
+#they are not enabled in the Windows Registry. For some reason, this happens
+#with voices you add to Windows from Settings menu and they simply don't show
+#up even though they are installed. The following PowerShell script will fix
+#this and enable all voices on your machine. However, it appears to create some
+#duplicates with "Desktop" at the end of their names which throw an exception
+#when the app tries to select them. For now, I'm catching the exception and tell
+#the user the voice is no good. But I want to figure out why this is happening
+#and how we can change our PowerShell script to prevent this from happening in
+#the first place.
+
+$sourcePath = 'HKLM:\software\Microsoft\Speech_OneCore\Voices\Tokens' #Where the OneCore voices live
+$destinationPath = 'HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens' #For 64-bit apps
+$destinationPath2 = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\SPEECH\Voices\Tokens' #For 32-bit apps
+cd $destinationPath
+$listVoices = Get-ChildItem $sourcePath
+foreach($voice in $listVoices)
+{
+$source = $voice.PSPath #Get the path of this voices key
+copy -Path $source -Destination $destinationPath -Recurse
+copy -Path $source -Destination $destinationPath2 -Recurse
+}

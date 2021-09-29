@@ -13,10 +13,15 @@ namespace TextNarrator
     /// </summary>
     internal static class Program
     {
+
         /// <summary>
         /// Gets the MainForm object of the application
         /// </summary>
-        public static MainForm MainForm { get; private set; }
+        public static MainForm MainForm { 
+            get; private set; 
+        }
+
+
 
         /// <summary>
         /// The main entry point for the application.

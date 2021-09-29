@@ -28,7 +28,6 @@ namespace TextNarrator.UI
         private void InitializeComponent ( ) {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.richTextBox_TextToRead = new System.Windows.Forms.RichTextBox();
             this.comboBox_Voices = new System.Windows.Forms.ComboBox();
             this.label_SelectVoice = new System.Windows.Forms.Label();
             this.label_TextToRead = new System.Windows.Forms.Label();
@@ -41,7 +40,6 @@ namespace TextNarrator.UI
             this.label_Volume = new System.Windows.Forms.Label();
             this.btn_Speak = new System.Windows.Forms.Button();
             this.btn_Clear = new System.Windows.Forms.Button();
-            
             this.btn_Stop = new System.Windows.Forms.Button();
             this.panel_VoiceInfo = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -62,7 +60,8 @@ namespace TextNarrator.UI
             this.contextMenu_SelectAll = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
-            
+            this.textBox_NarrationPrompt = new System.Windows.Forms.TextBox();
+            this.btn_Export = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Volume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Speed)).BeginInit();
@@ -71,26 +70,13 @@ namespace TextNarrator.UI
             this.contextMenuStrip_EditText.SuspendLayout();
             this.SuspendLayout();
             // 
-            // richTextBox_TextToRead
-            // 
-            this.richTextBox_TextToRead.BackColor = System.Drawing.Color.MediumBlue;
-            this.richTextBox_TextToRead.Font = new System.Drawing.Font("Maiandra GD", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBox_TextToRead.ForeColor = System.Drawing.Color.White;
-            this.richTextBox_TextToRead.Location = new System.Drawing.Point(12, 235);
-            this.richTextBox_TextToRead.Name = "richTextBox_TextToRead";
-            this.richTextBox_TextToRead.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBox_TextToRead.Size = new System.Drawing.Size(760, 269);
-            this.richTextBox_TextToRead.TabIndex = 0;
-            this.richTextBox_TextToRead.Text = "Input text for narrator to read ...";
-            this.richTextBox_TextToRead.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnTextboxRightClick);
-            // 
             // comboBox_Voices
             // 
             this.comboBox_Voices.BackColor = System.Drawing.Color.MediumBlue;
             this.comboBox_Voices.Font = new System.Drawing.Font("Maiandra GD", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Voices.ForeColor = System.Drawing.Color.AliceBlue;
             this.comboBox_Voices.FormattingEnabled = true;
-            this.comboBox_Voices.Location = new System.Drawing.Point(12, 54);
+            this.comboBox_Voices.Location = new System.Drawing.Point(12, 40);
             this.comboBox_Voices.Name = "comboBox_Voices";
             this.comboBox_Voices.Size = new System.Drawing.Size(244, 24);
             this.comboBox_Voices.TabIndex = 1;
@@ -102,7 +88,7 @@ namespace TextNarrator.UI
             this.label_SelectVoice.AutoSize = true;
             this.label_SelectVoice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_SelectVoice.ForeColor = System.Drawing.Color.White;
-            this.label_SelectVoice.Location = new System.Drawing.Point(9, 35);
+            this.label_SelectVoice.Location = new System.Drawing.Point(9, 21);
             this.label_SelectVoice.Name = "label_SelectVoice";
             this.label_SelectVoice.Size = new System.Drawing.Size(87, 16);
             this.label_SelectVoice.TabIndex = 2;
@@ -128,7 +114,7 @@ namespace TextNarrator.UI
             this.panel1.Controls.Add(this.trackBar_Volume);
             this.panel1.Controls.Add(this.trackBar_Speed);
             this.panel1.Controls.Add(this.label_Volume);
-            this.panel1.Location = new System.Drawing.Point(479, 92);
+            this.panel1.Location = new System.Drawing.Point(479, 78);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(293, 108);
             this.panel1.TabIndex = 4;
@@ -203,52 +189,55 @@ namespace TextNarrator.UI
             // 
             // btn_Speak
             // 
+            this.btn_Speak.BackColor = System.Drawing.Color.Chartreuse;
             this.btn_Speak.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_Speak.BackgroundImage")));
-            this.btn_Speak.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_Speak.Font = new System.Drawing.Font("Palatino Linotype", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Speak.ForeColor = System.Drawing.Color.DarkBlue;
+            this.btn_Speak.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Speak.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Speak.ForeColor = System.Drawing.Color.Black;
             this.btn_Speak.Location = new System.Drawing.Point(616, 510);
             this.btn_Speak.Name = "btn_Speak";
             this.btn_Speak.Size = new System.Drawing.Size(156, 26);
             this.btn_Speak.TabIndex = 5;
             this.btn_Speak.Text = "Speak";
-            this.btn_Speak.UseVisualStyleBackColor = true;
+            this.btn_Speak.UseVisualStyleBackColor = false;
             this.btn_Speak.Click += new System.EventHandler(this.OnSpeakButtonClick);
             // 
             // btn_Clear
             // 
             this.btn_Clear.AutoEllipsis = true;
+            this.btn_Clear.BackColor = System.Drawing.Color.Chocolate;
             this.btn_Clear.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_Clear.BackgroundImage")));
-            this.btn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_Clear.Font = new System.Drawing.Font("Palatino Linotype", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Clear.ForeColor = System.Drawing.Color.DarkBlue;
+            this.btn_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Clear.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Clear.ForeColor = System.Drawing.Color.White;
             this.btn_Clear.Location = new System.Drawing.Point(12, 510);
             this.btn_Clear.Name = "btn_Clear";
             this.btn_Clear.Size = new System.Drawing.Size(156, 26);
             this.btn_Clear.TabIndex = 6;
             this.btn_Clear.Text = global::TextNarrator.ACResources.Clear_Button_TXT;
-            this.btn_Clear.UseVisualStyleBackColor = true;
+            this.btn_Clear.UseVisualStyleBackColor = false;
             this.btn_Clear.Click += new System.EventHandler(this.OnClearButtonClick);
             // 
             // btn_Stop
             // 
+            this.btn_Stop.BackColor = System.Drawing.Color.Red;
             this.btn_Stop.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_Stop.BackgroundImage")));
-            this.btn_Stop.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btn_Stop.Font = new System.Drawing.Font("Palatino Linotype", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Stop.ForeColor = System.Drawing.Color.DarkBlue;
+            this.btn_Stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Stop.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Stop.ForeColor = System.Drawing.Color.Black;
             this.btn_Stop.Location = new System.Drawing.Point(454, 510);
             this.btn_Stop.Name = "btn_Stop";
             this.btn_Stop.Size = new System.Drawing.Size(156, 26);
             this.btn_Stop.TabIndex = 8;
             this.btn_Stop.Text = "Stop / Cancel";
-            this.btn_Stop.UseVisualStyleBackColor = true;
+            this.btn_Stop.UseVisualStyleBackColor = false;
             this.btn_Stop.Click += new System.EventHandler(this.OnStopButtonClick);
             // 
             // panel_VoiceInfo
             // 
             this.panel_VoiceInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel_VoiceInfo.Controls.Add(this.tableLayoutPanel1);
-            this.panel_VoiceInfo.Location = new System.Drawing.Point(12, 92);
+            this.panel_VoiceInfo.Location = new System.Drawing.Point(12, 78);
             this.panel_VoiceInfo.Name = "panel_VoiceInfo";
             this.panel_VoiceInfo.Size = new System.Drawing.Size(453, 108);
             this.panel_VoiceInfo.TabIndex = 9;
@@ -369,7 +358,7 @@ namespace TextNarrator.UI
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(476, 73);
+            this.label1.Location = new System.Drawing.Point(476, 59);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 16);
             this.label1.TabIndex = 10;
@@ -448,12 +437,37 @@ namespace TextNarrator.UI
             this.contextMenu_Delete.Text = "Delete";
             this.contextMenu_Delete.Click += new System.EventHandler(this.OnEdit_DeleteClick);
             // 
+            // textBox_NarrationPrompt
+            // 
+            this.textBox_NarrationPrompt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.textBox_NarrationPrompt.Font = new System.Drawing.Font("Lucida Sans", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_NarrationPrompt.ForeColor = System.Drawing.Color.White;
+            this.textBox_NarrationPrompt.Location = new System.Drawing.Point(12, 235);
+            this.textBox_NarrationPrompt.Multiline = true;
+            this.textBox_NarrationPrompt.Name = "textBox_NarrationPrompt";
+            this.textBox_NarrationPrompt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_NarrationPrompt.Size = new System.Drawing.Size(760, 269);
+            this.textBox_NarrationPrompt.TabIndex = 11;
+            this.textBox_NarrationPrompt.Text = "Narrator will read the text you put here ...";
+            // 
+            // btn_Export
+            // 
+            this.btn_Export.Location = new System.Drawing.Point(633, 52);
+            this.btn_Export.Name = "btn_Export";
+            this.btn_Export.Size = new System.Drawing.Size(139, 23);
+            this.btn_Export.TabIndex = 12;
+            this.btn_Export.Text = "Export to Audio File ...";
+            this.btn_Export.UseVisualStyleBackColor = true;
+            this.btn_Export.Click += new System.EventHandler(this.OnSaveToAudioFile);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.btn_Export);
+            this.Controls.Add(this.textBox_NarrationPrompt);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel_VoiceInfo);
             this.Controls.Add(this.btn_Stop);
@@ -463,7 +477,6 @@ namespace TextNarrator.UI
             this.Controls.Add(this.label_TextToRead);
             this.Controls.Add(this.label_SelectVoice);
             this.Controls.Add(this.comboBox_Voices);
-            this.Controls.Add(this.richTextBox_TextToRead);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 600);
@@ -485,8 +498,6 @@ namespace TextNarrator.UI
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox richTextBox_TextToRead;
         private System.Windows.Forms.ComboBox comboBox_Voices;
         private System.Windows.Forms.Label label_SelectVoice;
         private System.Windows.Forms.Label label_TextToRead;
@@ -519,6 +530,8 @@ namespace TextNarrator.UI
         private System.Windows.Forms.ToolStripMenuItem contextMenu_SelectAll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem contextMenu_Delete;
+        private System.Windows.Forms.TextBox textBox_NarrationPrompt;
+        private System.Windows.Forms.Button btn_Export;
     }
 }
 

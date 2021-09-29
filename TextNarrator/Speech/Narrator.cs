@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using System.Speech.Synthesis;
@@ -30,13 +31,26 @@ namespace TextNarrator.Speech
 
 
         #region Constants
+
         const int
             _MIN_VOL    = 0,
             _MAX_VOL    = 100,
             _MIN_RATE   = -10,
             _MAX_RATE   = 10;
 
+        /// <summary>
+        /// HRESULT Error code:
+        /// Occurs when asynchronous speech is canceled
+        /// during the middle of speaking
+        /// </summary>
         const int _HRESULT_ASYNC_CANCEL = -2146233029;
+
+        /// <summary>
+        /// Default audio export path
+        /// </summary>
+        static readonly string _DEFAULT_EXPORT_PATH =
+            $"{Environment.CurrentDirectory}\\exports\\";
+
         #endregion
 
 
@@ -135,6 +149,7 @@ namespace TextNarrator.Speech
         event EventHandler<SpeakCompletedEventArgs> speakCompleted;
         event EventHandler<SpeakStartedEventArgs> speakStarted;
         event EventHandler<SpeakProgressEventArgs> speakProgress;
+        event Action fileExported;
 
         /// <summary>
         /// Event raised on speech synthesis state changes
@@ -204,6 +219,24 @@ namespace TextNarrator.Speech
             remove {
                 lock ( objLock ) {
                     speakProgress -= value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Event raised when a wav file is finished exporting
+        /// </summary>
+        public event Action FileExported {
+
+            add {
+                lock ( objLock ) {
+                    fileExported += value;
+                }
+            }
+
+            remove {
+                lock ( objLock ) {
+                    fileExported -= value;
                 }
             }
         }
@@ -294,7 +327,47 @@ namespace TextNarrator.Speech
             return installedVoices[index].VoiceInfo;
         }
 
+        /// <summary>
+        /// Creates a wav file of the Narrator's voice reading
+        /// the given text and saves it to disk ...
+        /// </summary>
+        /// <param name="fullPath">Path to save the file</param>
+        /// <param name="textToSpeak">Text to speak aloud and save to audio file</param>
+        public void ExportAudio ( string fullPath, string textToSpeak ) {
 
+            //! Stop any speech currently playing/paused :
+            if ( SynthState != SynthesizerState.Ready )
+                Stop();
+
+            //! Set output to wav file and speak :
+            speechSynth.SetOutputToWaveFile( fullPath );
+            this.Speak( textToSpeak );
+
+            //! Wait on a separate thread for speech to finish :
+            var waitThread = new Thread( () =>
+            {
+
+                while ( SynthState == SynthesizerState.Speaking )
+                    Thread.Sleep(50);
+
+                //! Restore output to default audio device :
+                speechSynth.SetOutputToDefaultAudioDevice();
+
+                //! Fire export completed event to the UI :
+                if(fileExported != null) {
+                    fileExported();
+                }
+
+            } ) {
+                
+                Name = "SetDefaultAudioOuput_WAIT_THREAD",
+                Priority = ThreadPriority.Normal,
+                IsBackground = true,
+            };
+
+            waitThread.Start();
+            
+        }
 
 
         #region SpeechSynthesizer Event Handlers

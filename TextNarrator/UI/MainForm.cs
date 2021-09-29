@@ -29,6 +29,8 @@ namespace TextNarrator.UI
 
         Narrator narrator;
 
+        int prevVoiceIndex = 0;
+        bool isExportingFile = false;
 
         #region Constants & Read-Only Strings
         static readonly string
@@ -61,6 +63,12 @@ namespace TextNarrator.UI
             narrator.SpeakProgress += ( s, a ) =>
                 { _onNarratorSpeechProgress(); };
 
+            narrator.FileExported += ( ) => {
+                var reenableUI = new Action( () => { _onExportComplete(); });
+                this.Invoke( reenableUI ) ;
+                isExportingFile = false;
+            };
+
             base.OnLoad( e );
         }
 
@@ -73,7 +81,10 @@ namespace TextNarrator.UI
 
         protected override void OnClosing ( CancelEventArgs e ) {
 
-            if ( narrator.isSpeaking )
+            if ( isExportingFile )
+                e.Cancel = true;
+
+            else if ( narrator.isSpeaking )
                 narrator.Stop();
 
             base.OnClosing( e );
@@ -168,6 +179,7 @@ namespace TextNarrator.UI
         }
 
 
+
         /// <summary>
         /// Set up the initial UI state when app loads
         /// </summary>
@@ -204,7 +216,7 @@ namespace TextNarrator.UI
 
 
         void _startSpeaking ( ) {
-            narrator.Speak( richTextBox_TextToRead.Text );
+            narrator.Speak( textBox_NarrationPrompt.Text );
         }
 
         void _pauseSpeaking ( ) {
@@ -215,6 +227,36 @@ namespace TextNarrator.UI
             narrator.Resume();
         }
 
+        void _exportFileOK ( object sender, CancelEventArgs e ) {
+
+            /* Anything that needs to be done here when the save
+             * file dialog completes without any issues goes here
+             */
+        }
+
+        void _onSavingWavFile ( ) {
+
+            isExportingFile = true;
+
+            this.UseWaitCursor = true;
+            btn_Speak.Enabled = false;
+            btn_Clear.Enabled = false;
+            btn_Export.Enabled = false;
+
+            _setStopButtonState( false );
+            _enabledisableUIOptions( false );
+        }
+
+        void _onExportComplete ( ) {
+
+            this.UseWaitCursor = false;
+            btn_Speak.Enabled = true;
+            btn_Clear.Enabled = true;
+            btn_Export.Enabled = true;
+
+            _setStopButtonState( false );
+            _enabledisableUIOptions( true );
+        }
 
 
         #region UI Event Handlers
@@ -223,15 +265,29 @@ namespace TextNarrator.UI
 
             if ( narrator != null ) {
 
-                //! Swap narrator voices :
-                int index = comboBox_Voices.SelectedIndex;
-                var voiceInfo = narrator.ChangeVoice( index );
+                try {
 
-                //! Display the voice info :
-                label_Name_TXT.Text = voiceInfo.Name;
-                label_Culture_TXT.Text = voiceInfo.Culture.DisplayName;
-                label_Gender_TXT.Text = voiceInfo.Gender.ToString();
-                label_Age_TXT.Text = voiceInfo.Age.ToString();
+                    //! Swap narrator voices :
+                    int index = comboBox_Voices.SelectedIndex;
+                    var voiceInfo = narrator.ChangeVoice( index );
+
+                    //! Display the voice info :
+                    label_Name_TXT.Text = voiceInfo.Name;
+                    label_Culture_TXT.Text = voiceInfo.Culture.DisplayName;
+                    label_Gender_TXT.Text = voiceInfo.Gender.ToString();
+                    label_Age_TXT.Text = voiceInfo.Age.ToString();
+
+                    prevVoiceIndex = comboBox_Voices.SelectedIndex;
+                }
+
+                catch ( Exception ex ) {
+
+                    MessageBox.Show( 
+                        $"Cannot use the voice you selected!\n{ex.Message}", 
+                        $"Voice Error: HRESULT = {ex.HResult}" );
+
+                    comboBox_Voices.SelectedIndex = prevVoiceIndex;
+                }
             }
         }
 
@@ -259,7 +315,7 @@ namespace TextNarrator.UI
         }
 
         void OnClearButtonClick( object sender, EventArgs e ) {
-            richTextBox_TextToRead.Clear();
+            textBox_NarrationPrompt.Clear();
         }
 
         void OnVolumeChanged( object sender, EventArgs e ) {
@@ -278,88 +334,114 @@ namespace TextNarrator.UI
             label_Speed_Value.Text = speed.ToString();
         }
 
+        void OnSaveToAudioFile( object sender, EventArgs e ) {
+
+            if ( narrator == null || narrator.IsDisposed || narrator.Disposing )
+                return;
+
+            else if ( narrator.SynthState != SynthesizerState.Ready )
+                narrator.Stop();
+
+            using ( SaveFileDialog saveDialog = new SaveFileDialog() {
+                    OverwritePrompt = true,
+                    CheckPathExists = true,
+                    DefaultExt = ".wav",
+                    Filter = "Wav Files | *.wav",
+                    FileName = "narrator_export.wav",
+                    AddExtension = true,
+                } ) {
+
+                saveDialog.FileOk += ( s, cancel_args ) => {
+
+                    var filename = saveDialog.FileName;
+                    narrator.ExportAudio( filename, textBox_NarrationPrompt.Text );
+                };
+
+                
+                saveDialog.ShowDialog();
+                _onSavingWavFile();
+
+                saveDialog.Dispose();
+            }
+        }
+
         #endregion
-
-
 
         #region Edit Menu Items
 
-        void OnEdit_UndoClick ( object sender, EventArgs e ) {
+        //void OnEdit_UndoClick ( object sender, EventArgs e ) {
 
-            if ( richTextBox_TextToRead.CanUndo )
-                richTextBox_TextToRead.Undo();
-        }
+        //    if ( textBox_NarrationPrompt.CanUndo )
+        //        textBox_NarrationPrompt.Undo();
+        //}
 
-        void OnEdit_RedoClick ( object sender, EventArgs e ) {
+        //void OnEdit_RedoClick ( object sender, EventArgs e ) {
 
-            if ( richTextBox_TextToRead.CanRedo )
-                richTextBox_TextToRead.Redo();
-        }
+        //    if ( textBox_NarrationPrompt.CanRedo )
+        //        textBox_NarrationPrompt.Redo();
+        //}
 
         void OnEdit_CutClick ( object sender, EventArgs e ) {
 
-            if ( richTextBox_TextToRead.SelectedText.Length > 0 )
-                richTextBox_TextToRead.Cut();
+            if ( textBox_NarrationPrompt.SelectedText.Length > 0 )
+                textBox_NarrationPrompt.Cut();
         }
 
         void OnEdit_CopyClick ( object sender, EventArgs e ) {
 
-            if ( richTextBox_TextToRead.SelectedText.Length > 0 )
-                richTextBox_TextToRead.Copy();
+            if ( textBox_NarrationPrompt.SelectedText.Length > 0 )
+                textBox_NarrationPrompt.Copy();
         }
 
         void OnEdit_PasteClick ( object sender, EventArgs e ) {
 
-            if ( Clipboard.ContainsText() && richTextBox_TextToRead.CanPaste( DataFormats.GetFormat( DataFormats.Text ) ) ) {
-                //richTextBox_TextToRead.Paste();
+            if ( Clipboard.ContainsText() ) {
+
+                //textBox_NarrationPrompt.Paste();
 
                 var copiedText = Clipboard.GetText();
-
-                richTextBox_TextToRead.Text += copiedText;
+                textBox_NarrationPrompt.Text += copiedText;
             }
 
         }
 
         void OnEdit_SelectAllClick ( object sender, EventArgs e ) {
 
-            if ( richTextBox_TextToRead.Text.Length > 0 )
-                richTextBox_TextToRead.SelectAll();
+            if ( textBox_NarrationPrompt.Text.Length > 0 )
+                textBox_NarrationPrompt.SelectAll();
         }
 
-        void OnEdit_DeleteClick( object sender, EventArgs e ) {
+        void OnEdit_DeleteClick ( object sender, EventArgs e ) {
 
-            //var selection = richTextBox_TextToRead.SelectedText;
+            //var selection = textBox_NarrationPrompt.SelectedText;
 
-            richTextBox_TextToRead.SelectedText = string.Empty;
+            textBox_NarrationPrompt.SelectedText = string.Empty;
         }
 
         #endregion
 
+        //void OnTextboxRightClick ( object sender, MouseEventArgs e ) {
+
+        //    if ( e.Button == MouseButtons.Right ) {
+
+        //        if ( contextMenuStrip_EditText.Visible )
+        //            contextMenuStrip_EditText.Hide();
+
+        //        _onOpeningContext( ( textBox_NarrationPrompt.SelectedText.Length > 0 ) );
+
+        //        contextMenuStrip_EditText.Show( textBox_NarrationPrompt, e.Location );
+        //    }
 
 
+        //    void _onOpeningContext ( bool hasSelectedText ) {
 
-        void OnTextboxRightClick ( object sender, MouseEventArgs e ) {
+        //        contextMenu_Copy.Enabled = hasSelectedText;
+        //        contextMenu_Cut.Enabled = hasSelectedText;
+        //        contextMenu_Delete.Enabled = hasSelectedText;
+        //    }
+        //}
 
-            if ( e.Button == MouseButtons.Right ) {
-
-                if ( contextMenuStrip_EditText.Visible )
-                    contextMenuStrip_EditText.Hide();
-
-                _onOpeningContext( ( richTextBox_TextToRead.SelectedText.Length > 0 ) );
-
-                contextMenuStrip_EditText.Show( richTextBox_TextToRead, e.Location );
-            }
-
-
-            void _onOpeningContext ( bool hasSelectedText ) {
-
-                contextMenu_Copy.Enabled = hasSelectedText;
-                contextMenu_Cut.Enabled = hasSelectedText;
-                contextMenu_Delete.Enabled = hasSelectedText;
-            }
-        }
-
-
+        
 
         public void AddVoices ( string[] names ) {
 
